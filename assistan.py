@@ -1,6 +1,7 @@
 import tkinter as tk
 from PIL import ImageTk, Image
 from random import randint
+import wikipedia
 
 
 class App:
@@ -22,11 +23,17 @@ class App:
 
     def question(self, master):
         self.changeimg(self.master)
-        qtn = self.entry.get()
+        qtn = self.entry.get().lower()
         self.entry.delete(0, tk.END)
         self.response.config(state='normal')
         self.response.delete('1.0', tk.END)
-        self.response.insert('1.0', 'SWOOSH.')
+        if 'wikipedia' in qtn:
+            topic = qtn.replace('wikipedia', '')
+            try:
+                summary = wikipedia.summary(topic, sentences=2)
+                self.response.insert('1.0', f'{summary}')
+            except (wikipedia.exceptions.DisambiguationError, wikipedia.exceptions.PageError):
+                self.response.insert('1.0', "It's either not there or you need to be more specific.")
         self.response.config(state='disabled')
 
     def changeimg(self, master):
